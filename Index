@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KidneyCare</title>
+    
+    <!-- ใช้ // เพื่อป้องกันเบราว์เซอร์หรือโปรแกรมแปลง URL ผิดพลาด -->
+    <script src="//cdn.tailwindcss.com"></script>
+    <script charset="utf-8" src="//static.line-scdn.net/liff/edge/2/sdk.js"></script>
+    <link href="//fonts.googleapis.com/css2?family=Kanit:wght@300;400;600&display=swap" rel="stylesheet">
+    
+    <style>
+        body { font-family: 'Kanit', sans-serif; background-color: #f4f7f6; margin: 0; padding: 0; }
+        .card { background: white; border-radius: 15px; padding: 20px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 15px; }
+        .bottle-container { width: 60px; height: 100px; border: 3px solid #0891b2; border-radius: 5px 5px 15px 15px; position: relative; overflow: hidden; margin: 0 auto; }
+        .water-level { position: absolute; bottom: 0; width: 100%; background-color: #22d3ee; transition: height 0.5s ease; }
+        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: white; z-index: 1000; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+    </style>
+</head>
+<body class="p-4">
+    <!-- หน้าจอโหลด -->
+    <div id="loading" class="overlay">
+        <div class="animate-spin rounded-full h-12 w-12 border-b-4 border-cyan-600 mb-4"></div>
+        <p class="text-gray-600 font-bold text-lg">กำลังโหลดแอปพลิเคชัน...</p>
+    </div>
+
+    <!-- แอปพลิเคชันหลัก -->
+    <div id="mainApp" class="max-w-md mx-auto hidden pb-10">
+        <h1 class="text-2xl font-bold text-center mb-6 text-gray-800">📊 บันทึกสุขภาพประจำวัน</h1>
+        
+        <div class="card border-t-4 border-cyan-500">
+            <h2 class="text-cyan-600 font-bold mb-3 flex items-center gap-2">💓 สัญญาณชีพ</h2>
+            <div class="grid grid-cols-3 gap-2 text-sm">
+                <div><label class="block mb-1">อุณหภูมิ</label><input type="number" id="temp" step="0.1" class="w-full border p-2 rounded" placeholder="36.5"></div>
+                <div class="col-span-2"><label class="block mb-1">ความดัน (SYS/DIA)</label>
+                    <div class="flex items-center gap-1"><input type="number" id="sys" class="w-full border p-2 rounded text-center" placeholder="120"><span>/</span><input type="number" id="dia" class="w-full border p-2 rounded text-center" placeholder="80"></div>
+                </div>
+                <div class="col-span-3 mt-2"><label class="block mb-1">ชีพจร (bpm)</label><input type="number" id="pulse" class="w-full border p-2 rounded" placeholder="70"></div>
+            </div>
+        </div>
+        
+        <div class="card border-t-4 border-blue-500">
+            <h2 class="text-blue-600 font-bold mb-3 flex items-center gap-2">💧 ปริมาณน้ำ</h2>
+            <div class="flex items-center gap-4">
+                <div class="flex-1 space-y-2">
+                    <input type="number" id="limitWater" value="1000" class="w-full border p-2 rounded" oninput="calcWater()">
+                    <input type="number" id="usedWater" class="w-full border p-2 rounded" oninput="calcWater()" placeholder="ดื่มไปแล้ว">
+                </div>
+                <div class="text-center">
+                    <div class="bottle-container"><div id="waterLevel" class="water-level"></div></div>
+                    <p class="text-[10px] mt-1 text-gray-500">เหลือ <span id="percentText">100</span>%</p>
+                </div>
+            </div>
+            <div class="mt-3 text-center bg-blue-50 py-2 rounded-lg text-blue-700 font-bold">คงเหลือ: <span id="remainWater">0</span> มล.</div>
+        </div>
+
+        <div class="card border-t-4 border-indigo-500">
+            <h2 class="text-indigo-600 font-bold mb-3 flex items-center gap-2">⚖️ น้ำหนักตัว</h2>
+            <div class="grid grid-cols-2 gap-4 mb-4">
+                <input type="number" id="prevWeight" step="0.1" class="w-full border p-2 rounded" oninput="calcIDWG()" placeholder="น้ำหนักแห้ง">
+                <input type="number" id="currWeight" step="0.1" class="w-full border p-2 rounded" oninput="calcIDWG()" placeholder="ปัจจุบัน">
+            </div>
+            <div class="text-center bg-gray-50 p-4 rounded-lg">
+                <p id="idwgResult" class="text-4xl font-bold text-indigo-600">0%</p>
+            </div>
+        </div>
+        
+        <button id="btnSummarize" onclick="summarize()" class="w-full bg-cyan-600 text-white py-4 rounded-xl font-bold text-xl shadow-lg mt-6 active:scale-95 transition-transform">🔍 สรุปผลการตรวจ</button>
+
+        <div id="summaryBox" class="card mt-4 hidden bg-yellow-50 border-2 border-yellow-200">
+            <h3 class="font-bold text-lg mb-2 text-yellow-800">📋 ผลการประเมิน</h3>
+            <div id="summaryContent" class="text-sm space-y-2 text-gray-700 mb-4"></div>
+            <button onclick="saveData()" id="btnSave" class="w-full bg-green-600 text-white py-3 rounded-lg font-bold shadow-md active:scale-95 transition-transform">💾 บันทึกและส่งรายงานเข้า LINE</button>
+        </div>
+        <p class="text-center text-[10px] text-gray-400 mt-4 mb-8">ผู้ใช้งาน: <span id="userDisplay">...</span></p>
+    </div>
+
+    <script>
+        // ==========================================
+        // ⚙️ ตั้งค่าสำคัญ 2 จุด ก่อนเริ่มใช้งาน
+        // ==========================================
+        const MY_LIFF_ID = "ใส่_LIFF_ID_ของคุณที่นี่"; 
+        
+        const GAS_PREFIX = "https://";
+        // นำ URL ของ Web App ตัด https:// ด้านหน้าออก แล้วมาวางที่ตัวแปรด้านล่าง
+        const GAS_PATH = "script.google.com/macros/s/xxxxxxxxxxxx/exec"; 
+        const GAS_URL = GAS_PREFIX + GAS_PATH;
+        // ==========================================
+
+        let userId = ""; 
+        let displayName = "";
+        let currentIDWG = 0;
+
+        async function initApp() {
+            try {
+                await liff.init({ liffId: MY_LIFF_ID });
+                
+                if (!liff.isLoggedIn()) {
+                    liff.login();
+                    return;
+                }
+
+                const profile = await liff.getProfile();
+                userId = profile.userId;
+                displayName = profile.displayName;
+                document.getElementById('userDisplay').innerText = displayName;
+                
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('mainApp').classList.remove('hidden');
+                calcWater(); 
+            } catch (err) {
+                alert("เกิดข้อผิดพลาดในการโหลด LINE: " + err.message);
+            }
+        }
+
+        window.onload = initApp;
+
+        function calcWater() {
+            const limit = parseFloat(document.getElementById('limitWater').value) || 0;
+            const used = parseFloat(document.getElementById('usedWater').value) || 0;
+            const remain = limit - used;
+            const percent = limit > 0 ? Math.max(0, (remain / limit) * 100) : 0;
+            document.getElementById('remainWater').innerText = Math.max(0, remain);
+            document.getElementById('waterLevel').style.height = (percent > 100 ? 100 : percent) + '%';
+            document.getElementById('percentText').innerText = Math.round(percent);
+        }
+
+        function calcIDWG() {
+            const prev = parseFloat(document.getElementById('prevWeight').value) || 0;
+            const curr = parseFloat(document.getElementById('currWeight').value) || 0;
+            if (prev > 0) {
+                currentIDWG = ((curr - prev) / prev) * 100;
+                document.getElementById('idwgResult').innerText = currentIDWG.toFixed(1) + '%';
+                document.getElementById('idwgResult').style.color = currentIDWG > 5 ? '#e11d48' : '#4f46e5';
+            }
+        }
+
+        function summarize() {
+            const temp = document.getElementById('temp').value || "-";
+            const sys = parseInt(document.getElementById('sys').value) || 0;
+            const dia = parseInt(document.getElementById('dia').value) || 0;
+            const pulse = document.getElementById('pulse').value || "-";
+            const remain = parseInt(document.getElementById('remainWater').innerText);
+            
+            let report = "";
+            report += (sys >= 140 || dia >= 90) ? "❌ <b>ความดัน:</b> สูง<br>" : "✅ <b>ความดัน:</b> ปกติ<br>";
+            report += (pulse !== "-" && (parseInt(pulse) < 60 || parseInt(pulse) > 100)) ? "❌ <b>ชีพจร:</b> ผิดปกติ (" + pulse + " bpm)<br>" : "✅ <b>ชีพจร:</b> ปกติ (" + pulse + " bpm)<br>";
+            report += (parseFloat(temp) > 37.5) ? "❌ <b>อุณหภูมิ:</b> มีไข้<br>" : "✅ <b>อุณหภูมิ:</b> ปกติ<br>";
+            report += (remain <= 0) ? "❌ <b>น้ำดื่ม:</b> เกินกำหนด!<br>" : "✅ <b>น้ำดื่ม:</b> เหลือ " + remain + " มล.<br>";
+            report += (currentIDWG > 5) ? "❌ <b>IDWG:</b> " + currentIDWG.toFixed(1) + "% (สูง)" : "✅ <b>IDWG:</b> " + currentIDWG.toFixed(1) + "% (ปกติ)";
+
+            document.getElementById('summaryContent').innerHTML = report;
+            document.getElementById('summaryBox').classList.remove('hidden');
+            window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+        }
+
+        async function saveData() {
+            if (GAS_PATH.includes("xxxxxxxxxxxx")) {
+                alert("กรุณาใส่ URL ของ Google Apps Script ในโค้ดก่อนทำการบันทึกครับ");
+                return;
+            }
+
+            const btn = document.getElementById('btnSave');
+            btn.disabled = true;
+            btn.innerText = "⏳ กำลังบันทึกข้อมูลและส่งเข้า LINE...";
+
+            const data = {
+                userId: userId,
+                userName: displayName,
+                temp: document.getElementById('temp').value || "-",
+                bp: (document.getElementById('sys').value || "-") + "/" + (document.getElementById('dia').value || "-"),
+                pulse: document.getElementById('pulse').value || "-",
+                remainWater: document.getElementById('remainWater').innerText,
+                idwg: currentIDWG.toFixed(1) + "%"
+            };
+
+            try {
+                // เรียกใช้ Google Apps Script แบบ API
+                const response = await fetch(GAS_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                    body: JSON.stringify(data)
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    document.body.innerHTML = '<div style="display:flex; height:100vh; align-items:center; justify-content:center; flex-direction:column; background-color:#f0fdf4; font-family:Kanit,sans-serif;"><h1 style="font-size:60px; margin:0;">✅</h1><h2 style="color:#166534; margin-top:15px; font-size:24px;">บันทึกข้อมูลสำเร็จ!</h2><p style="color:#15803d; font-size:14px; margin-top:8px;">ระบบกำลังปิดหน้าต่างอัตโนมัติ...</p></div>';
+                    
+                    setTimeout(() => { liff.closeWindow(); }, 2000);
+                } else {
+                    throw new Error(result.message);
+                }
+            } catch (error) {
+                alert("❌ เกิดข้อผิดพลาดในการส่งข้อมูล: " + error.message);
+                btn.disabled = false;
+                btn.innerText = "💾 บันทึกและส่งรายงานเข้า LINE";
+            }
+        }
+    </script>
+</body>
+</html>
