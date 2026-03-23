@@ -40,29 +40,30 @@
 
     <!-- แอปพลิเคชันหลัก -->
     <div id="mainApp" class="max-w-md mx-auto hidden pb-10">
-        <h1 class="text-2xl font-bold text-center mb-6 text-gray-800">📊 บันทึกสุขภาพประจำวัน</h1>
+        <h1 class="text-2xl font-bold text-center mb-6 text-gray-800">บันทึกสุขภาพประจำวัน</h1>
+        <p class="font-semibold text-slate-700 mb-3">สัญญาณชีพ</p>
         
         <div class="card-grid">
         <!-- อุณหภูมิ -->
         <div class="card">
             <span class="card-title">อุณหภูมิกาย</span>
-            <input type="number" id="temp" step="0.1" class="huge-num" value="37.0">
+            <input type="number" id="temp" step="0.1" class="huge-num" placeholder="0">
             <span class="unit-text">องศาเซลเซียส</span>
         </div>
         <!-- ความดันโลหิต -->
         <div class="card">
            <span class="card-title">ความดันโลหิต</span>
            <div class="bp-container">
-               <input type="number" id="sys" class="bp-num text-right" value="120">
+               <input type="number" id="sys" class="bp-num text-right" placeholder="0">
                <span class="text-slate-300">/</span>
-               <input type="number" id="dia" class="bp-num text-left" value="75">
+               <input type="number" id="dia" class="bp-num text-left" placeholder="0">
            </div>
          <span class="unit-text">มิลลิเมตรปรอท</span>
        </div>
     <!-- ชีพจร -->
        <div class="card">
           <span class="card-title">ชีพจร</span>
-          <input type="number" id="pulse" class="huge-num" value="79">
+          <input type="number" id="pulse" class="huge-num" placeholder="0">
           <span class="unit-text">ครั้ง/นาที</span>
        </div>
      </div>
@@ -71,7 +72,7 @@
             <h2 class="text-blue-600 font-bold mb-3 flex items-center gap-2">💧 ปริมาณน้ำ</h2>
             <div class="flex items-center gap-4">
                 <div class="flex-1 space-y-2">
-                    <input type="number" id="limitWater" value="1000" class="w-full border p-2 rounded" oninput="calcWater()">
+                    <input type="number" id="limitWater" placeholder="ปริมาณน้ำที่จำกัด" class="w-full border p-2 rounded" oninput="calcWater()">
                     <input type="number" id="usedWater" class="w-full border p-2 rounded" oninput="calcWater()" placeholder="ดื่มไปแล้ว">
                 </div>
                 <div class="text-center">
@@ -86,7 +87,7 @@
             <h2 class="text-indigo-600 font-bold mb-3 flex items-center gap-2">⚖️ น้ำหนักตัว</h2>
             <div class="grid grid-cols-2 gap-4 mb-4">
                 <input type="number" id="prevWeight" step="0.1" class="w-full border p-2 rounded" oninput="calcIDWG()" placeholder="น้ำหนักแห้ง">
-                <input type="number" id="currWeight" step="0.1" class="w-full border p-2 rounded" oninput="calcIDWG()" placeholder="ปัจจุบัน">
+                <input type="number" id="currWeight" step="0.1" class="w-full border p-2 rounded" oninput="calcIDWG()" placeholder="ปัจจุบันก่อนฟอก">
             </div>
             <div class="text-center bg-gray-50 p-4 rounded-lg">
                 <p id="idwgResult" class="text-4xl font-bold text-indigo-600">0%</p>
