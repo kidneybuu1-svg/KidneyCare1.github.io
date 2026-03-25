@@ -176,11 +176,11 @@
             // 1. เงื่อนไขความดัน (Systolic / Diastolic)
             let bpStatus = "";
             if (sys >= 140 || dia >= 90) {
-                bpStatus = "❌ <b>ความดัน:</b> สูง";
+                bpStatus = "❌ <b>ความดันโลหิต:</b> สูงกว่าเกณฑ์ => ระวังอาการปวดศีรษะ คลื่นไส้อาเจียน ตาพร่ามัว ";
             } else if (sys < 90 || dia < 60) {
-                bpStatus = "⚠️ <b>ความดัน:</b> ต่ำ";
+                bpStatus = "⚠️ <b>ความดันโลหิต:</b> ต่ำกว่าเกณฑ์ => ระวังอาการหน้ามืด เป็นลม ";
             } else {
-                bpStatus = "✅ <b>ความดัน:</b> ปกติ";
+                bpStatus = "✅ <b>ความดัน:</b> อยู่ในเกณฑ์ปกติ ";
             }
             report += bpStatus + "<br>";
 
@@ -189,11 +189,11 @@
             let pulseStatus = "";
             if (pulse !== "-" && !isNaN(pulseVal)) {
             if (pulseVal > 100) {
-                pulseStatus = "❌ <b>ชีพจร:</b> เร็วเกินไป (" + pulse + " bpm)";
+                pulseStatus = "❌ <b>ชีพจร:</b> สูงกว่าเกณฑ์ => ระวังอาการใจสั่น หอบเหนื่อย แน่นหน้าอก ";
             } else if (pulseVal < 60) {
-                pulseStatus = "⚠️ <b>ชีพจร:</b> ช้าเกินไป (" + pulse + " bpm)";
+                pulseStatus = "⚠️ <b>ชีพจร:</b> ต่ำกว่าเกณฑ์ => ระวังอาการหน้ามืด เป็นลม อ่อนเพลีย ";
             } else {
-                pulseStatus = "✅ <b>ชีพจร:</b> ปกติ (" + pulse + " bpm)";
+                pulseStatus = "✅ <b>ชีพจร:</b> อยู่ในเกณฑ์ปกติ";
             }
             } else {
                 pulseStatus = "❓ <b>ชีพจร:</b> ไม่ทราบข้อมูล";
@@ -202,23 +202,23 @@
 
             // 3. เงื่อนไขอุณหภูมิ (Temperature)
             let tempVal = parseFloat(temp);
-            if (tempVal > 37.5) {
-                report += "❌ <b>อุณหภูมิ:</b> มีไข้ (" + tempVal + " °C)<br>";
-            } else if (tempVal < 35.5) {
-                report += "⚠️ <b>อุณหภูมิ:</b> ต่ำเกินไป (" + tempVal + " °C)<br>";
+            if (tempVal > 37.4) {
+                report += "❌ <b>อุณหภูมิ:</b> มีไข้ => ควรพักผ่อน เช็ดตัว และรับประทานยาลดไข้ ";
+            } else if (tempVal < 36.5) {
+                report += "⚠️ <b>อุณหภูมิ:</b> ต่ำ => ควรเพิ่มความอบอุ่นให้แก่ร่างกาย ";
             } else {
-                report += "✅ <b>อุณหภูมิ:</b> ปกติ (" + tempVal + " °C)<br>";
+                report += "✅ <b>อุณหภูมิ:</b> อยู่ในเกณฑ์ปกติ";
             }
 
             // 4. น้ำดื่ม (Remain)
             report += (remain <= 0) 
-                ? "❌ <b>น้ำดื่ม:</b> เกินกำหนด!<br>" 
-                : "✅ <b>น้ำดื่ม:</b> เหลือ " + remain + " มล.<br>";
+                ? "❌ <b>น้ำดื่ม:</b> เกินกำหนด! ไม่ควรดื่มเพิ่มเติม" 
+                : "✅ <b>น้ำดื่ม:</b> คงเหลือ " + remain + " มล.";
 
             // 5. IDWG
             report += (currentIDWG > 5) 
-                ? "❌ <b>IDWG:</b> " + currentIDWG.toFixed(1) + "% (สูง)" 
-                :"✅ <b>IDWG:</b> " + currentIDWG.toFixed(1) + "% (ปกติ)";
+                ? "❌ <b>IDWG:</b> สูงกว่าเกณฑ์ => ควรควบคุมน้ำหนักตัว " 
+                :"✅ <b>IDWG:</b> อยู่ในเกณฑ์ปกติ ";
             
             document.getElementById('summaryContent').innerHTML = report;
             document.getElementById('summaryBox').classList.remove('hidden');
