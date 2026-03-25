@@ -212,15 +212,18 @@
 
             // 4. น้ำดื่ม (Remain)
             report += (remain <= 0) 
-                ? "❌ <b>น้ำดื่ม:</b> เกินกำหนด! ไม่ควรดื่มเพิ่มเติม" 
-                : "✅ <b>น้ำดื่ม:</b> คงเหลือ " + remain + " มล.";
+                ? "❌ <b>น้ำดื่ม:</b> เกินกำหนด! ไม่ควรดื่มเพิ่มเติม <br>" 
+                : "✅ <b>น้ำดื่ม:</b> คงเหลือ " + remain + " มล. <br>";
 
             // 5. IDWG
             report += (currentIDWG > 5) 
                 ? "❌ <b>IDWG:</b> สูงกว่าเกณฑ์ => ควรควบคุมน้ำหนักตัว " 
                 :"✅ <b>IDWG:</b> อยู่ในเกณฑ์ปกติ ";
             
-            document.getElementById('summaryContent').innerHTML = report;
+            const contentDiv = document.getElementById('summaryContent');
+            contentDiv.innerHTML = report;
+            contentDiv.style.textAlign = "left"; // บังคับชิดซ้าย
+            contentDiv.style.padding = "10px 20px"; // เพิ่มพื้นที่ว่างรอบๆ ให้ดูสบายตาขึ้น
             document.getElementById('summaryBox').classList.remove('hidden');
             window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
         }
