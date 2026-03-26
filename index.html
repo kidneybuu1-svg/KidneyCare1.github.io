@@ -68,8 +68,8 @@
        </div>
      </div>
         
-        <div class="card shadow-2xl shadow-indigo-200/60 border border-indigo-50 mb-6">
-            <h2 class="text-blue-600 font-bold mb-3 text-center flex items-center justify-center gap-2">💧 ปริมาณน้ำที่จำกัด</h2>
+        <div class="card shadow-lg hover:shadow-xl transition-shadow duration-300 border border-slate-100 mb-6">
+            <h2 class="font-semibold text-slate-700 text-center mb-3 text-center flex items-center justify-center gap-2">💧 ปริมาณน้ำที่จำกัด</h2>
             <div class="flex items-center gap-4">
                 <div class="flex-1 space-y-2">
                     <input type="number" id="limitWater" placeholder="ปริมาณน้ำที่จำกัดต่อวัน" class="w-50 border p-2 rounded" oninput="calcWater()">
@@ -87,7 +87,7 @@
             <h2 class="text-indigo-600 font-bold mb-3 flex items-center justify-center gap-2">🥪 น้ำหนักตัว</h2>
             <div class="grid grid-cols-2 gap-4 mb-4">
                 <input type="number" id="prevWeight" step="0.1" class="w-50 border p-2 rounded" oninput="calcIDWG()" placeholder="น้ำหนักแห้ง">
-                <input type="number" id="currWeight" step="0.1" class="w-50 border p-2 rounded" oninput="calcIDWG()" placeholder="น้ำหนักปัจจุบันก่อนฟอก">
+                <input type="number" id="currWeight" step="0.1" class="w-50 border p-2 rounded" oninput="calcIDWG()" placeholder="น้ำหนักก่อนฟอก">
             </div>
             <div class="text-center bg-indigo-50 py-2 rounded-lg text-indigo-700 font-bold text-2xl">
                 น้ำหนักเพิ่มขึ้น: <span id="idwgResult"> 0% </span>
