@@ -15,12 +15,37 @@
         .card-grid { 
            display: grid; 
            grid-template-columns: repeat(3, 1fr); 
-           gap: 10px; 
-           margin-bottom: 20px; 
+           gap: 12px; 
+           margin-bottom: 24px; 
         }
+
+        /* ปรับปรุง Card: เปลี่ยนจากเส้นขอบเป็นเงา และจัดแถวให้ตรงกัน */
         .card { 
-           background: white; border: 1px solid #e2e8f0; border-radius: 12px; 
-           padding: 15px 5px; text-align: center; min-height: 130px;
+           background: white; 
+           border-radius: 16px; 
+           padding: 15px 8px; 
+           text-align: center; 
+           min-height: 145px; /* เพิ่มความสูงเพื่อให้มีพื้นที่หายใจ */
+           
+           /* เปลี่ยนจาก border เป็นเงาที่ดูทันสมัย */
+           box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.05), 0 2px 4px -2px rgb(0 0 0 / 0.05), 0 0 0 1px rgb(0 0 0 / 0.02);
+           
+           /* ใช้ Flexbox เพื่อดัน "หน่วย" (มิลลิเมตรปรอท) ลงไปข้างล่างให้ตรงกันทุกใบ */
+           display: flex;
+           flex-direction: column;
+           justify-content: space-between;
+           align-items: center;
+           transition: all 0.3s ease;
+        }
+
+        .card-title { font-size: 14px; font-weight: 600; color: #475569; }
+        
+        /* สไตล์ของหน่วยด้านล่าง */
+        .unit-text { 
+            font-size: 11px; 
+            color: #94a3b8; 
+            margin-top: auto; /* ช่วยดันตัวเองลงไปขอบล่างสุด */
+            padding-top: 5px;
         }
         .huge-num { font-size: 2.2rem; font-weight: 700; color: #0891b2; width: 100%; text-align: center; border: none; outline: none; background: transparent; }
         .bp-container { display: grid; grid-template-columns: 1fr 10px 1fr; align-items: center; color: #0891b2; font-weight: 700; }
