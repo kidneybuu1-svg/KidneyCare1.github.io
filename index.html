@@ -41,7 +41,7 @@
     <!-- แอปพลิเคชันหลัก -->
     <div id="mainApp" class="max-w-md mx-auto hidden pb-10">
         <h1 class="text-2xl font-bold text-center mb-6 text-gray-800">📋 บันทึกสุขภาพประจำวัน</h1>
-        <p class="font-semibold text-slate-700 mb-3">🚨 สัญญาณชีพ</p>
+        <p class="font-semibold text-slate-700 mb-3 text-center">🚨 สัญญาณชีพ</p>
         
         <div class="card-grid">
         <!-- อุณหภูมิ -->
@@ -69,13 +69,13 @@
      </div>
         
         <div class="card border-t-4 border-blue-500">
-            <h2 class="text-blue-600 font-bold mb-3 flex items-center gap-2">💧 ปริมาณน้ำที่จำกัด</h2>
+            <h2 class="text-blue-600 font-bold mb-3 text-center flex items-center gap-2">💧 ปริมาณน้ำที่จำกัด</h2>
             <div class="flex items-center gap-4">
                 <div class="flex-1 space-y-2">
                     <input type="number" id="limitWater" placeholder="ปริมาณน้ำที่จำกัดต่อวัน" class="w-50 border p-2 rounded" oninput="calcWater()">
                     <input type="number" id="usedWater" class="w-50 border p-2 rounded" oninput="calcWater()" placeholder="ดื่มไปแล้ว">
                 </div>
-                <div class="text-center">
+                <div class="flex flex-col items-center justify-center w-full">
                     <div class="bottle-container"><div id="waterLevel" class="water-level"></div></div>
                     <p class="text-[10px] mt-1 text-gray-500">เหลือ <span id="percentText">100</span>%</p>
                 </div>
@@ -84,10 +84,10 @@
         </div>
 
         <div class="card border-t-4 border-indigo-500">
-            <h2 class="text-indigo-600 font-bold mb-3 flex items-center gap-2">🥪 น้ำหนักตัว</h2>
+            <h2 class="text-indigo-600 font-bold mb-3 text-center flex items-center gap-2">🥪 น้ำหนักตัว</h2>
             <div class="grid grid-cols-2 gap-4 mb-4">
                 <input type="number" id="prevWeight" step="0.1" class="w-50 border p-2 rounded" oninput="calcIDWG()" placeholder="น้ำหนักแห้ง">
-                <input type="number" id="currWeight" step="0.1" class="w-50 border p-2 rounded" oninput="calcIDWG()" placeholder="ปัจจุบันก่อนฟอก">
+                <input type="number" id="currWeight" step="0.1" class="w-50 border p-2 rounded" oninput="calcIDWG()" placeholder="น้ำหนักปัจจุบันก่อนฟอก">
             </div>
             <div class="text-center bg-gray-50 p-4 rounded-lg">
                 <p id="idwgResult" class="text-4xl font-bold text-indigo-600">0%</p>
@@ -149,6 +149,12 @@
             const used = parseFloat(document.getElementById('usedWater').value) || 0;
             const remain = limit - used;
             const percent = limit > 0 ? Math.max(0, (remain / limit) * 100) : 0;
+            const waterEl = document.getElementById('waterLevel');
+                if (percent <= 20) {
+                    waterEl.classList.replace('bg-cyan-400', 'bg-red-400');
+                } else {
+                    waterEl.classList.replace('bg-red-400', 'bg-cyan-400');
+        }
             document.getElementById('remainWater').innerText = Math.max(0, remain);
             document.getElementById('waterLevel').style.height = (percent > 100 ? 100 : percent) + '%';
             document.getElementById('percentText').innerText = Math.round(percent);
